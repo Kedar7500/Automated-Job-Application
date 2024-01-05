@@ -1,27 +1,31 @@
 package com.example.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
+
 
 import com.example.demo.services.EmailSender;
 
-import jakarta.mail.Multipart;
+
 @Controller
 @RequestMapping("/email")
+@CrossOrigin(origins="http://localhost:3000")
 public class EmailSendController {
 	
 	@Autowired
 	EmailSender sender;
 	
-	@GetMapping("/send")
-	public String sendEmail() {
+	@PostMapping("/send")
+	public ResponseEntity<String>sendEmail(@RequestParam("to")String to) {
 		
-		String to="gprajyot95@gmail.com";
+		try {
+		String [] toEmails=to.split(",");
 		String subject="regarding job application";
 		String text="Dear Madam,\r\n"
 				+ "I am writing to express my strong interest in the Trainee Software engineer position at Cross Country Infotech Pvt Ltd as advertised on LinkedIn career portal job listing. I am recent graduate of CDAC, in my academics and project experience at CDAC, I have gained valuable knowledge and skills in java, spring framework, spring boot, MySQL, NoSQL, C#, ASP.NET Core, React.js, Node.js, JavaScript, HTML, CSS. Apart from these Docker, Kubernetes, AWS & Git. These skills have equipped me to excel in a fast-paced and dynamic environment, making me a perfect fit for the Trainee Software engineer position at Cross Country Infotech Pvt Ltd.\r\n"
@@ -37,8 +41,13 @@ public class EmailSendController {
 		String filename="Kedar_Jagtap_Resume.pdf";
 		 
 		
-		sender.sendEmail(to, subject, text,filename);
-		return "email-sent";
+		sender.sendEmail(toEmails, subject, text,filename);
+		return ResponseEntity.status(HttpStatus.OK).body("Email Sent Successfully");
+		
+		}catch(Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error sending email.please try again !");
+		}
 	}
 
 }

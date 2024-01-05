@@ -25,7 +25,7 @@ public class EmailSender {
 	@Value("${resume.file.directory}")
 	private String resumeFileDirectory;
 	
-	public void sendEmail(String to, String subject, String text, String filename) {
+	public void sendEmail(String[] to, String subject, String text, String filename) {
 		
 		//SimpleMailMessage mailMsg=new SimpleMailMessage();
 		try {
